@@ -134,9 +134,11 @@ class Loader
             } elseif ($fixture instanceof DependentFixtureInterface) {
                 $this->orderFixturesByDependencies = true;
                 foreach($fixture->getDependencies() as $class) {
-                    if (class_exists($class)) {
-                        $this->addFixture(new $class);
+                    if (!class_exists($class)) {
+                        throw new \RuntimeException(sprintf('Fixture class %s does not exist', $class));
                     }
+
+                    $this->addFixture(new $class);
                 }
             }
         }
